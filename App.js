@@ -6,21 +6,31 @@ const app = express()
 app.use(bodyParser.urlencoded({extended: true}))
 app.use(bodyParser.json())
 
-app.get('/get-profile', (req, res) => {
-    let response = res;
-    MongoClient.connect('mongodb://admin:password@localhost:27017', (e, c) => {
-        if (e) throw e;
+app.get('/', (req, res) => {
+    res.send('Hello World!')
+});
 
-        let db = c.db('user-account')
-        let query = {userid: 1}
-        db.collection('users').findOne(query, (e, r) => {
-            if (e) throw e;
-            c.close();
-            response.send(r)
-        })
-    })
+app.get('/profile', (req, res) => {
+    MongoClient.connect('mongodb://admin:password@localhost:27017', (err, client) => {
+        if (err) {
+            console.error('Failed to connect to MongoDB:', err);
+            return res.status(500).send('Internal Server Error');
+        }
 
-})
+        const db = client.db('user-account');
+        const query = { userid: 1 };
+        db.collection('users').findOne(query, (err, result) => {
+            if (err) {
+                console.error('Error finding document:', err);
+                client.close();
+                return res.status(500).send('Internal Server Error');
+            }
+
+            client.close();
+            res.send(result);
+        });
+    });
+});
 
 app.listen((3000), () => {
     console.log('Server is running on port 3000')
