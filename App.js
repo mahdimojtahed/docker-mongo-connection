@@ -17,14 +17,18 @@ const userSchema = new mongoose.Schema({
 });
 const User = mongoose.model('User', userSchema);
 
-console.log(process.env.MONGODB_URI)
-mongoose.connect(process.env.MONGODB_URI, {})
-    .then(() => console.log('Connected to MongoDB'))
-    .catch(err => console.error('Could not connect to MongoDB:', err));
+const retryConnect = () => {
+    mongoose.connect(process.env.MONGODB_URI, {})
+        .then(() => console.log('Connected to MongoDB'))
+        .catch(err => {
+            console.error('Could not connect to MongoDB:', err)
+            setTimeout(retryConnect, 5000)
+        });
+}
 
 app.get('/add-profile', async (req, res) => {
     try {
-        const newUser = new User({ userid: 1, name: 'mehdi' });
+        const newUser = new User({userid: 1, name: 'mehdi'});
         const savedUser = await newUser.save();
         res.status(201).send(savedUser);
     } catch (err) {
@@ -35,7 +39,7 @@ app.get('/add-profile', async (req, res) => {
 
 app.get('/get-profile', async (req, res) => {
     try {
-        const user = await User.findOne({ userid: 1 }).exec();
+        const user = await User.findOne({userid: 1}).exec();
         res.send(user);
     } catch (err) {
         console.error('Error fetching user:', err);
