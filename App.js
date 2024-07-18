@@ -1,5 +1,5 @@
 const express = require('express')
-const MongoClient = require('mongodb').MongoClient
+const mongoose = require('mongoose')
 const bodyParser = require('body-parser')
 
 const app = express()
@@ -10,25 +10,27 @@ app.get('/', (req, res) => {
     res.send('Hello World!')
 });
 
+
+const userSchema = new mongoose.Schema({
+    userid: Number,
+    name: String,
+});
+const User = mongoose.model('User', userSchema);
+
+mongoose.connect('mongodb://admin:password@localhost:27017/user-account', {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+})
+    .then(() => console.log('Connected to MongoDB'))
+    .catch(err => console.error('Could not connect to MongoDB:', err));
+
 app.get('/profile', (req, res) => {
-    MongoClient.connect('mongodb://admin:password@localhost:27017', (err, client) => {
+    User.findOne({ userid: 1 }, (err, user) => {
         if (err) {
-            console.error('Failed to connect to MongoDB:', err);
+            console.error('Error fetching user:', err);
             return res.status(500).send('Internal Server Error');
         }
-
-        const db = client.db('user-account');
-        const query = { userid: 1 };
-        db.collection('users').findOne(query, (err, result) => {
-            if (err) {
-                console.error('Error finding document:', err);
-                client.close();
-                return res.status(500).send('Internal Server Error');
-            }
-
-            client.close();
-            res.send(result);
-        });
+        res.send(user);
     });
 });
 
