@@ -24,14 +24,14 @@ mongoose.connect('mongodb://admin:password@localhost:27017/user-account?authSour
     .then(() => console.log('Connected to MongoDB'))
     .catch(err => console.error('Could not connect to MongoDB:', err));
 
-app.get('/profile', (req, res) => {
-    User.findOne({ userid: 1 }, (err, user) => {
-        if (err) {
-            console.error('Error fetching user:', err);
-            return res.status(500).send('Internal Server Error');
-        }
+app.get('/get-profile', async (req, res) => {
+    try {
+        const user = await User.findOne({ userid: 1 }).exec();
         res.send(user);
-    });
+    } catch (err) {
+        console.error('Error fetching user:', err);
+        res.status(500).send('Internal Server Error');
+    }
 });
 
 app.listen((3000), () => {
