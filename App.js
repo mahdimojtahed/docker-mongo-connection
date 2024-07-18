@@ -25,6 +25,7 @@ const retryConnect = () => {
             setTimeout(retryConnect, 5000)
         });
 }
+retryConnect();
 
 app.get('/add-profile', async (req, res) => {
     try {
