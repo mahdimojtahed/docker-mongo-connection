@@ -16,10 +16,38 @@ const userSchema = new mongoose.Schema({
     name: String,
 });
 const User = mongoose.model('User', userSchema);
+let uri = process.env.MONGODB_URI;
 
-mongoose.connect(process.env.MONGODB_URI, {})
-    .then(() => console.log('Connected to MongoDB'))
-    .catch(err => console.error('Could not connect to MongoDB:', err));
+const initializeDatabase = async () => {
+    try {
+        // Connect to MongoDB
+        await mongoose.connect(uri, {});
+        console.log('Connected to MongoDB');
+
+        const db = mongoose.connection.db;
+
+        const collections = await db.listCollections().toArray();
+        const collectionNames = collections.map(col => col.name);
+
+        if (!collectionNames.includes('users')) {
+            console.log('Initializing database...');
+            await db.createCollection('users');
+            console.log('Database initialized');
+        }
+
+        const userCollection = db.collection('users');
+        const existingUser = await userCollection.findOne({ userid: 1 });
+        if (!existingUser) {
+            await userCollection.insertOne({ userid: 1, name: 'mehdi' });
+            console.log('Default user added');
+        }
+    } catch (err) {
+        console.error('Database initialization error:', err);
+        process.exit(1);
+    }
+};
+initializeDatabase();
+
 
 app.get('/add-profile', async (req, res) => {
     try {
