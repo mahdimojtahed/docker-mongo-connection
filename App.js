@@ -17,7 +17,7 @@ const userSchema = new mongoose.Schema({
 });
 const User = mongoose.model('User', userSchema);
 
-mongoose.connect('mongodb://admin:password@localhost:27017/user-account', {
+mongoose.connect('mongodb://admin:password@localhost:27017/user-account?authSource=admin', {
     useNewUrlParser: true,
     useUnifiedTopology: true,
 })
