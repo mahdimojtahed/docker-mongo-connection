@@ -23,7 +23,7 @@ mongoose.connect('mongodb://admin:password@localhost:27017/user-account?authSour
     .then(() => console.log('Connected to MongoDB'))
     .catch(err => console.error('Could not connect to MongoDB:', err));
 
-app.post('/add-profile', async (req, res) => {
+app.get('/add-profile', async (req, res) => {
     try {
         const newUser = new User({ userid: 1, name: 'mehdi' });
         const savedUser = await newUser.save();
