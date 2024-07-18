@@ -17,7 +17,7 @@ const userSchema = new mongoose.Schema({
 });
 const User = mongoose.model('User', userSchema);
 
-mongoose.connect('mongodb://admin:password@localhost:27017/user-account?authSource=admin', {
+mongoose.connect(process.env.MONGODB_URI, {
     useUnifiedTopology: true,
 })
     .then(() => console.log('Connected to MongoDB'))
