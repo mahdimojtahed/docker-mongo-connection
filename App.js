@@ -18,11 +18,21 @@ const userSchema = new mongoose.Schema({
 const User = mongoose.model('User', userSchema);
 
 mongoose.connect('mongodb://admin:password@localhost:27017/user-account?authSource=admin', {
-    useNewUrlParser: true,
     useUnifiedTopology: true,
 })
     .then(() => console.log('Connected to MongoDB'))
     .catch(err => console.error('Could not connect to MongoDB:', err));
+
+app.post('/add-profile', async (req, res) => {
+    try {
+        const newUser = new User({ userid: 1, name: 'mehdi' });
+        const savedUser = await newUser.save();
+        res.status(201).send(savedUser);
+    } catch (err) {
+        console.error('Error adding user:', err);
+        res.status(500).send('Internal Server Error');
+    }
+});
 
 app.get('/get-profile', async (req, res) => {
     try {
