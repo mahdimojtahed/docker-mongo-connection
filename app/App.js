@@ -5,16 +5,13 @@ const bodyParser = require('body-parser');
 const app = express();
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
+app.use(express.json())
 
 app.get('/', (req, res) => {
     res.send('Hello World!');
 });
 
-const userSchema = new mongoose.Schema({
-    userid: Number,
-    name: String,
-});
-const User = mongoose.model('User', userSchema);
+
 const uri = process.env.MONGODB_URI;
 
 const initializeDatabase = async () => {
@@ -52,9 +49,16 @@ app.get('/add-profile', async (req, res) => {
 
 app.get('/get-profile', async (req, res) => {
     const { userid } = req.query;
+    console.log(userid);
+
     try {
         const db = mongoose.connection.db;
-        const user = db.collection('users').findOne({ userid: userid });
+        const user = await db.collection('users').findOne({ userid: userid });
+
+        if (!user) {
+            return res.status(404).send('User not found');
+        }
+
         res.send(user);
     } catch (err) {
         console.error('Error fetching user:', err);
