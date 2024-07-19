@@ -56,9 +56,9 @@ const initializeDatabase = async () => {
 initializeDatabase();
 
 app.get('/add-profile', async (req, res) => {
-    const { name, email } = req.query;
+    const { name, userid } = req.query;
     try {
-        const newUser = new User({ name, email});
+        const newUser = new User({ userid, name});
         const savedUser = await newUser.save();
         res.status(201).send(savedUser);
     } catch (err) {
@@ -68,8 +68,9 @@ app.get('/add-profile', async (req, res) => {
 });
 
 app.get('/get-profile', async (req, res) => {
+    const { userid } = req.query;
     try {
-        const user = await User.findOne({ userid: 1 }).exec();
+        const user = await User.findOne({ userid: userid }).exec();
         res.send(user);
     } catch (err) {
         console.error('Error fetching user:', err);
