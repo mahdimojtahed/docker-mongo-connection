@@ -7,9 +7,6 @@ services:
     environment:
       - MONGO_INITDB_ROOT_USERNAME=admin
       - MONGO_INITDB_ROOT_PASSWORD=password
-    networks:
-      - app-network
-
   app:
     build: .
     container_name: node-mongo-app
@@ -19,9 +16,4 @@ services:
       - "4000:4000"
     depends_on:
       - mongodb
-    networks:
-      - app-network
 
-networks:
-  app-network:
-    driver: bridge
