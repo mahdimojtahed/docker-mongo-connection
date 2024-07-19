@@ -7,6 +7,8 @@ services:
     environment:
       - MONGO_INITDB_ROOT_USERNAME=admin
       - MONGO_INITDB_ROOT_PASSWORD=password
+    volumes:
+      - mongo-data:/data/db
   app:
     build: .
     container_name: node-mongo-app
@@ -16,4 +18,6 @@ services:
       - 4000:4000
     depends_on:
       - mongodb
-
+volumes:
+  mongo-data:
+    driver: local

@@ -56,8 +56,9 @@ const initializeDatabase = async () => {
 initializeDatabase();
 
 app.get('/add-profile', async (req, res) => {
+    const { name, email } = req.query;
     try {
-        const newUser = new User({ userid: 1, name: 'mehdi' });
+        const newUser = new User({ name, email});
         const savedUser = await newUser.save();
         res.status(201).send(savedUser);
     } catch (err) {
