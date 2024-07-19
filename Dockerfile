@@ -14,7 +14,7 @@ RUN chmod +x wait-for-it.sh
 
 EXPOSE 4000
 
-CMD ["./wait-for-it.sh", "mongo:27017", "--", "node", "App.js"]
+CMD ["./wait-for-it.sh", "mongodb:27017", "--", "node", "App.js"]
 
 
 

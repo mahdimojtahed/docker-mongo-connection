@@ -1,27 +1,26 @@
-const express = require('express')
-const mongoose = require('mongoose')
-const bodyParser = require('body-parser')
+const express = require('express');
+const mongoose = require('mongoose');
+const bodyParser = require('body-parser');
 
-const app = express()
-app.use(bodyParser.urlencoded({extended: true}))
-app.use(bodyParser.json())
+const app = express();
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
 
 app.get('/', (req, res) => {
-    res.send('Hello World!')
+    res.send('Hello World!');
 });
-
 
 const userSchema = new mongoose.Schema({
     userid: Number,
     name: String,
 });
 const User = mongoose.model('User', userSchema);
-let uri = process.env.MONGODB_URI;
+const uri = process.env.MONGODB_URI;
 
 const initializeDatabase = async () => {
     try {
-        // Connect to MongoDB
-        await mongoose.connect(uri, {});
+        console.log(uri);
+        await mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
         console.log('Connected to MongoDB');
 
         const db = mongoose.connection.db;
@@ -41,13 +40,20 @@ const initializeDatabase = async () => {
             await userCollection.insertOne({ userid: 1, name: 'mehdi' });
             console.log('Default user added');
         }
+
+        // Start the server after the database is initialized
+        app.listen(4000, () => {
+            console.log('Server is running on port 4000');
+        });
+
     } catch (err) {
         console.error('Database initialization error:', err);
         process.exit(1);
     }
 };
-initializeDatabase();
 
+// Call initializeDatabase to start the process
+initializeDatabase();
 
 app.get('/add-profile', async (req, res) => {
     try {
@@ -68,8 +74,4 @@ app.get('/get-profile', async (req, res) => {
         console.error('Error fetching user:', err);
         res.status(500).send('Internal Server Error');
     }
-});
-
-app.listen((4000), () => {
-    console.log('Server is running on port 4000')
 });
