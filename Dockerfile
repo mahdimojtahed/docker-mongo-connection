@@ -2,7 +2,7 @@ FROM node
 
 WORKDIR /usr/src/app
 
-COPY package*.json ./
+COPY ./app/package*.json ./
 
 RUN npm install
 
@@ -14,7 +14,7 @@ RUN chmod +x wait-for-it.sh
 
 EXPOSE 4000
 
-CMD ["./wait-for-it.sh", "mongodb:27017", "--", "node", "./app/App.js"]
+CMD ["./wait-for-it.sh", "mongodb:27017", "--", "node", "App.js"]
 
 
 
