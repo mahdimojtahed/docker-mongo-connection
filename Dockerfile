@@ -6,7 +6,7 @@ COPY package*.json ./
 
 RUN npm install
 
-COPY . .
+COPY ./app .
 
 COPY wait-for-it.sh .
 
